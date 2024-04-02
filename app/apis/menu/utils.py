@@ -23,8 +23,7 @@ def _image_url_to_base64(image_url: str):
         raise HTTPException(status_code=400, detail="Invalid image URL")
 
     try:
-        response = requests.get(image_url, timeout=5)  # Limita el tiempo de espera
-        # Puedes agregar aquí más validaciones, como verificar el tamaño/mime-type del contenido
+        response = requests.get(image_url, timeout=5)
         return base64.b64encode(response.content).decode()
     except requests.RequestException:
         raise HTTPException(status_code=500, detail="Error retrieving image")
