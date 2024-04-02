@@ -6,9 +6,28 @@ from db.models import MenuItem
 from fastapi import HTTPException
 
 
+ALLOWED_DOMAINS = {"example.com", "images.example.com"}
+
+def is_url_allowed(url):
+    try:
+        parsed_url = urlparse(url)
+        if parsed_url.scheme in ["http", "https"] and parsed_url.netloc in ALLOWED_DOMAINS:
+            return True
+        else:
+            return False
+    except Exception:
+        return False
+
 def _image_url_to_base64(image_url: str):
-    response = requests.get(image_url)
-    return base64.b64encode(response.content).decode()
+    if not is_url_allowed(image_url):
+        raise HTTPException(status_code=400, detail="Invalid image URL")
+
+    try:
+        response = requests.get(image_url, timeout=5)  # Limita el tiempo de espera
+        # Puedes agregar aquí más validaciones, como verificar el tamaño/mime-type del contenido
+        return base64.b64encode(response.content).decode()
+    except requests.RequestException:
+        raise HTTPException(status_code=500, detail="Error retrieving image")
 
 
 def create_menu_item(
