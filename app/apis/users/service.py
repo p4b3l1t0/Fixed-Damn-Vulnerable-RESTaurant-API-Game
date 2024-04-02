@@ -23,5 +23,5 @@ async def update_user_role(
             detail="Only Chef is authorized to add Chef role!",
         )
 
-    db_user = update_user(db, user.username, user)
+    db_user = update_user(db, current_user.username, user)
     return current_user
